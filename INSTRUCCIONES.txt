@@ -1,0 +1,36 @@
+AUTOR: Ing. Enrique Chuc Mezeta
+FECHA: Enero 2026
+
+REQUISITOS PREVIOS:
+-------------------
+1. Tener instalado Node.js (Version 16 o superior recomendada).
+2. Conexión a internet estable (para descargar librerías y consultar la API).
+
+PASOS PARA EJECUTAR LA APLICACION:
+----------------------------------
+
+PASO 1: OBTENER EL CODIGO
+Descargue el código fuente o clone el repositorio en su computadora.
+
+PASO 2: ABRIR LA TERMINAL
+Abra su consola de comandos (CMD, Terminal o PowerShell) y navegue hasta la carpeta del proyecto:
+> cd ruta/de/la/carpeta/pokedex-app
+
+PASO 3: INSTALAR DEPENDENCIAS
+Ejecute el siguiente comando para descargar las librerías necesarias (React, Redux, Tailwind, etc.):
+> npm install
+
+(Espere unos momentos mientras se completa la descarga en la carpeta 'node_modules').
+
+PASO 4: INICIAR EL SERVIDOR
+Una vez terminada la instalación, ejecute:
+> npm run dev
+
+PASO 5: VER LA APLICACION
+La consola mostrará una dirección local. Abra su navegador web (Chrome, Edge, Firefox) y visite:
+http://localhost:5173/
+
+NOTAS:
+------
+- El puerto 5173 es el predeterminado de Vite. Si está ocupado, el sistema asignará otro automáticamente (ej. 5174).
+- Para detener la aplicación, presione 'Ctrl + C' en la terminal.
