@@ -16,30 +16,30 @@ import { PokemonModal } from './components/PokemonModal';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
-  const { list, loading, page, selectedPokemon, isSearching } = useSelector((state: RootState) => state.pokemon);
+  const { list, loading, page, selectedPokemon, isSearching, globalNameList } = useSelector((state: RootState) => state.pokemon);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Carga inicial
   useEffect(() => {
     dispatch(initGlobalList());
-    dispatch(fetchPokemons(1));
   }, [dispatch]);
 
   // Cambio de Página
   useEffect(() => {
-    if (!isSearching && searchTerm === '') {
+    if (!isSearching && searchTerm === '' && globalNameList.length > 0) {
       dispatch(fetchPokemons(page));
     }
-  }, [page, dispatch, isSearching, searchTerm]);
+  }, [page, dispatch, isSearching, searchTerm, globalNameList.length]);
 
-  // 3. Buscador Inteligente
+  // Buscador Inteligente
   useEffect(() => {
     if (searchTerm.trim() === '') {
       // Si borras el texto, nos aseguramos de limpiar el estado de búsqueda
       // y recargar la página actual si es necesario
       if (isSearching) {
         dispatch(clearSearch());
-        dispatch(fetchPokemons(page)); 
+        // Si hay lista global, recargamos la página actual
+        if (globalNameList.length > 0) dispatch(fetchPokemons(page));
       }
       return;
     }
@@ -51,7 +51,7 @@ function App() {
     }, 500);
 
     return () => clearTimeout(delaySearch);
-  }, [searchTerm, dispatch]); 
+  }, [searchTerm, dispatch, globalNameList.length]); // Agregamos dependencia
 
   // Manejador del botón manual
   const handleSearchButton = (e: React.FormEvent) => {
@@ -107,7 +107,13 @@ function App() {
         {/* Pantalla Principal */}
         <div className="bg-gray-100 rounded-xl p-4 border-4 border-gray-600 shadow-inner min-h-[550px] flex flex-col relative">
             <div className="flex-1">
-              {loading ? (
+              {/* Si no tenemos lista global, estamos iniciando */}
+              {globalNameList.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-gray-500 space-y-4 pt-20">
+                   <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                   <p className="font-mono text-lg animate-pulse">Iniciando sistema...</p>
+                </div>
+              ) : loading ? (
                 <div className="h-full flex flex-col items-center justify-center text-gray-500 animate-pulse space-y-4 pt-20">
                   <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                   <p className="font-mono text-xl">Cargando datos...</p>

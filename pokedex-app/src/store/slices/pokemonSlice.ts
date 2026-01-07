@@ -36,9 +36,9 @@ interface PokemonState {
 
 const initialState: PokemonState = {
   list: [],
-  globalNameList: [],
+  globalNameList: [], // Aquí guardaremos los pokemones ordenados A-Z
   selectedPokemon: null,
-  loading: false,
+  loading: false, // La UI manejará la carga inicial
   error: null,
   page: 1,
   isSearching: false,
@@ -71,20 +71,32 @@ export const initGlobalList = createAsyncThunk(
   async () => {
     // Pedimos 10000 para traer todos los nombres existentes de una sola vez
     const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000&offset=0');
-    return response.data.results;
+    const allResults = response.data.results;
+    // Ordenamos alfabéticamente (A-Z)
+    allResults.sort((a: any, b: any) => a.name.localeCompare(b.name)); // Aplico el método nativo .sort() de JavaScript sobre este array con
+    return allResults;                                                 // localeCompare para asegurar un ordenamiento alfabético correcto.
   }
 );
 
 // Traer página normal
 export const fetchPokemons = createAsyncThunk(
   'pokemon/fetchPokemons',
-  async (page: number) => {
+  async (page: number, { getState }) => {
+    const state = getState() as RootState;
+    const allNames = state.pokemon.globalNameList;
+
+    // Si la lista global aún no carga, no hacemos nada
+    if (allNames.length === 0) return [];
+
     const limit = 6;
     const offset = (page - 1) * limit;
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
+
+    // Tomamos los 6 pokemones que tocan en esta página
+    const targets = allNames.slice(offset, offset + limit);
     
+    // Mostramos los detalles de esos 6
     const detailedData = await Promise.all(
-      response.data.results.map(async (pokemon: any) => {
+      targets.map(async (pokemon: any) => {
         const details = await axios.get(pokemon.url);
         return formatPokemonData(details.data);
       })
